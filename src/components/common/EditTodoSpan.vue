@@ -1,21 +1,25 @@
 <template>
   <div class="edit">
-
-    <my-input v-if="showInput"
+    <my-input v-if=" showInput"
               placeholder="редактировать"
               class="edit__input"
               v-model="titleInput"
               @blur="closeInput"
-
+              @keyup.enter="closeInput"
     />
-    <strong v-else @dblclick="editTitleHandler">{{ title }}</strong>
+    <div :class="customClass" v-else @dblclick="editTitleHandler">{{ title }}</div>
+    <my-button @click="editTitleHandler " class="edit__edit">
+      <img src="./../../assets/edit.svg" alt="удалить" width="30" height="30">
+    </my-button>
   </div>
 </template>
 
 <script setup>
+import MyButton from "@/components/common/MyButton.vue";
 import MyInput from "@/components/common/MyInput.vue";
 import {defineProps, ref} from "vue";
-const emits = defineEmits(['edit-title', 'edit-task']);
+
+const emits = defineEmits(['edit-title', 'edit-task', 'close-input']);
 const props = defineProps({
   title: {
     type: String,
@@ -27,12 +31,20 @@ const props = defineProps({
   },
   todoItemID: {
     type: String,
-    required:null
-  }
+    required: null
+  },
+  customClass: {
+    type: String
+  },
+
 });
+
+
 const showInput = ref(false);
+
 const editTitleHandler = () => {
- showInput.value=true;
+  titleInput.value = props.title;
+  showInput.value=true;
 }
 const titleInput = ref('');
 const closeInput = () => {
@@ -43,8 +55,6 @@ const closeInput = () => {
     }else if (props.todoItemID){
       emits('edit-title', props.todoItemID, titleInput.value)
     }
-
-
   }
 }
 
@@ -52,5 +62,16 @@ const closeInput = () => {
 </script>
 
 <style scoped>
+.edit {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
+  }
 
+
+.edit__edit {
+  background: transparent;
+  border: none;
+}
 </style>

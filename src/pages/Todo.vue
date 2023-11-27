@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import {watchEffect} from 'vue';
+import {watchEffect,onMounted} from 'vue';
 import Todolist from '@/components/Todolist.vue'
 import TodoAddItem from "@/components/common/TodoAddItem.vue";
 import MyLoader from "@/components/common/MyLoader.vue";
@@ -24,17 +24,18 @@ const todolistStore = useTodoListStore();
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-
-
-watchEffect(() => {
-  if (authStore.isLoggetIn && authStore.initFlag) {
-    todolistStore.getTodolists();
-  } else if (authStore.initFlag && !authStore.isLoggetIn) {
-    router.push('/');
-  }
-  else if (!authStore.initFlag && !authStore.isLoggetIn) {
-    router.push('/');
-  }
+onMounted(async () => {
+  await authStore.init();
+  watchEffect(() => {
+    if (authStore.isLoggetIn && authStore.initFlag) {
+      todolistStore.getTodolists();
+    } else if (authStore.initFlag && !authStore.isLoggetIn) {
+      router.push('/todo');
+    }
+    else if (!authStore.initFlag && !authStore.isLoggetIn) {
+      router.push('/');
+    }
+  });
 });
 
 

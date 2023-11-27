@@ -1,10 +1,12 @@
 <template>
   <div class="todolist">
     <div class="todolist__title-wrap">
-      <edit-todo-span :title="todoItem.title" :todoItemID="todoItem.id" @edit-title="editTitleHandler"/>
-      <my-button @click="todolistStore.deleteTodolist(todoItem.id)">Удалить</my-button>
+      <edit-todo-span :customClass="customClass" :title="todoItem.title" :todoItemID="todoItem.id" @edit-title="editTitleHandler" />
+      <my-button class="todolist__delete" @click="todolistStore.deleteTodolist(todoItem.id)">
+        <img src="./../assets/delete.svg" alt="удалить" width="30" height="30">
+      </my-button>
     </div>
-    <todo-add-item :todoItemID="todoItem.id" @add-item-to-todolist="addItemToTodoList"/>
+    <todo-add-item :todoItemID="todoItem.id" @add-item-to-todolist="addItemToTodoList" />
     <div class="todolist__item">
       <todo-item v-for="todo in todolistStore.todolist[todoItem.id]"
                  :key="todo.id"
@@ -21,6 +23,7 @@ import TodoItem from '@/components/TodoItem.vue'
 import TodoFilter from "@/components/TodoFilter.vue";
 import MyButton from "@/components/common/MyButton.vue";
 import EditTodoSpan from "@/components/common/EditTodoSpan.vue";
+import {ref, watch} from 'vue';
 
 import {useTodoListStore} from "@/stores/TodoListStore";
 
@@ -34,6 +37,8 @@ const props = defineProps({
     required: true,
   },
 });
+const customClass="todolist__title";
+
 onMounted(() => {
   todolistStore.getTasks(props.todoItem.id);
 
@@ -49,20 +54,36 @@ const editTitleHandler = (todoItemID ,value) => {
 </script>
 
 <style>
+button {
+  margin: 0 !important;
+}
 .todolist {
   width: 470px;
   padding: 20px;
   border: 1px solid #c25205;
+  margin-bottom: 20px;
+}
+.todolist__title {
+  font-size: 25px;
+  color: #421111;
+  text-transform: uppercase;
 }
 
 .todolist__title-wrap {
   display: flex;
   align-items: center;
   gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 25px;
 }
 
 .todolist__item {
   margin-top: 20px;
 }
+.todolist__delete {
+background: transparent;
+  border: none;
+}
+
 
 </style>

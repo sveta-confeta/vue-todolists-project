@@ -30,12 +30,15 @@ const props = defineProps({
 
 const modelValue = ref(props.modelValue);
 const onChange = (e) => {
+  debugger
   emits('update:modelValue', e.target.checked);
 
 }
 
 </script>
 
-<style>
-/* Ваши стили */
+<style scoped>
+.form-checkbox {
+  margin-bottom: 0 !important;
+}
 </style>

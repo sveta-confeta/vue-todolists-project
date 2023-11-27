@@ -1,8 +1,13 @@
 <template>
   <div class="todo-item">
     <my-checkbox v-model="isChecked" />
-    <edit-todo-span :title="todo.title" :taskID="todo.id" @edit-task="editTitleHandler"/>
-    <my-button @click="todolistStore.deleteTask(todoItemID,todo.id)">Удалить</my-button>
+    <edit-todo-span :title="todo.title"
+                    :taskID="todo.id"
+                    @edit-task="editTitleHandler"
+    />
+    <my-button class="todo-item__delete" @click="todolistStore.deleteTask(todoItemID,todo.id)">
+      <img src="./../assets/delete.svg" alt="удалить" width="30" height="30">
+    </my-button>
 
   </div>
 </template>
@@ -28,12 +33,12 @@ const props = defineProps({
   },
 });
 
-
 const isChecked = computed({
   get: () => props.todo.status === 2,
   set: (value) => {
     const status = value ? 2 : 0;
     todolistStore.updateStatus(props.todoItemID, props.todo.id, status);
+    debugger
   },
 });
 const editTitleHandler = (taskID, value) => {
@@ -49,6 +54,12 @@ const editTitleHandler = (taskID, value) => {
   display: flex;
   align-items: center;
   gap: 20px;
+  margin-bottom: 20px;
 }
+.todo-item__delete {
+  background: transparent;
+  border: none;
+}
+
 
 </style>

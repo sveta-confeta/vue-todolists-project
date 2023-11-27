@@ -54,6 +54,9 @@ const props = defineProps({
   label: {
     type: String,
   },
+  autofocusValue: {
+    type:Boolean
+  }
 });
 
 
@@ -62,11 +65,10 @@ const props = defineProps({
 <style>
 .form-input {
   position: relative;
-  padding: 24px 0;
 }
 .input-label{
   position: absolute;
-  top: 0;
+  top: -24px;
   left: 0;
 }
 .input-text,

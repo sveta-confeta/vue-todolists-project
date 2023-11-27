@@ -22,7 +22,6 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const logautHandler= () => {
-  debugger
   authStore.logout();
 }
 </script>

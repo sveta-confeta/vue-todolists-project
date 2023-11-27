@@ -3,11 +3,11 @@
     <my-input
         v-model.trim="title"
         @keyup.enter="addTask(todoItemID)"
-        placeholder="напишите название"
+        placeholder="название задачи"
         :class="['todoform__input', { error: error }]"
         @input="clearError"
     />
-    <my-button @click="addTask(todoItemID)">Добавить</my-button>
+    <my-button class="todoform__btn" @click="addTask(todoItemID)">Добавить</my-button>
 
     <div class="errorMessage" v-show="error">Title is required</div>
   </div>
@@ -60,14 +60,24 @@ const clearError = () => {
   display: flex;
   align-items: center;
   position: relative;
+  margin-bottom: 40px;
+  gap: 10px;
+}
+.todoform__btn {
+    border: 1px solid #3eaf7c;;
+    background: transparent;
+    color: #3eaf7c;
+    padding: 10px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline;
+    margin-right: 20px;
 }
 
-.todoform__input {
-  margin-right: 10px;
-}
 
 .error {
   border: 1px #c25205 solid !important;
+  border-radius: 10px;
 }
 
 .errorMessage {

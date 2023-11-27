@@ -1,6 +1,8 @@
 import {defineStore} from 'pinia'
-import {ref, computed} from "vue";
+import {ref, computed, reactive} from "vue";
 import axios from 'axios';
+import {useAuthStore} from '@/stores/AuthStore';
+
 
 const baseUrl = 'https://social-network.samuraijs.com/api/1.1/';
 export const instance = axios.create({
@@ -9,6 +11,7 @@ export const instance = axios.create({
 
 
 export const useTodoListStore = defineStore('todoLists', () => {
+    const authStore = useAuthStore(); //
 
     const todolist = ref({
         //     [todolistId1]:[
@@ -21,10 +24,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
         // { title: 'домашние дела', id: todolistId1,filter:'All'},
     ]);
 
-    let isLoading = ref({ value: false });
+    let isLoading = ref({value: false});
 
-    const errorMessage = ref('');
-    console.log(errorMessage.value)
 
     const activeFilterButton = (todoID, value) => {
         const todoList = todolists.value.find(item => item.id === todoID);
@@ -36,26 +37,26 @@ export const useTodoListStore = defineStore('todoLists', () => {
 
     const filteredTasks = computed(() => (todoID, value) => {
         if (!todolist.initialData) {
-            todolist.initialData = { ...todolist.value };
+            todolist.initialData = {...todolist.value};
         }
 
         if (value === 'Active') {
-                    todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                       return  f.status === 0
-                    });
-                    activeFilterButton(todoID, value);
+            todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
+                return f.status === 0
+            });
+            activeFilterButton(todoID, value);
 
-                } else if (value === 'Completed') {
-                    todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                        return f.status === 2;
-                    });
-                    activeFilterButton(todoID, value);
+        } else if (value === 'Completed') {
+            todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
+                return f.status === 2;
+            });
+            activeFilterButton(todoID, value);
 
-                } else {
-                    todolist.value[todoID] = todolist.initialData[todoID];
-                    activeFilterButton(todoID, value);
+        } else {
+            todolist.value[todoID] = todolist.initialData[todoID];
+            activeFilterButton(todoID, value);
 
-                }
+        }
     });
 
     const updateStatus = async (todolistId, taskId, status) => {
@@ -79,7 +80,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
                 }
             }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
@@ -91,7 +92,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
             todolist.value[todolistId] = response.data.items;
 
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         }
     };
     const addTask = async (todolistId, title) => {
@@ -100,12 +101,11 @@ export const useTodoListStore = defineStore('todoLists', () => {
         try {
             if (response.data.resultCode === 0) {
                 todolist.value[todolistId].unshift(response.data.data.item);
-                await getTodolists();
             } else {
-                errorMessage.value = response.data.messages[0];
+                authStore.setError(response.data.messages[0]);
             }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
@@ -132,18 +132,24 @@ export const useTodoListStore = defineStore('todoLists', () => {
                 }
             }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
     };
     const deleteTask = async (todolistId, taskId) => {
+        isLoading.value = true;
         try {
-            isLoading.value = true;
-            const response = await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
-            await getTasks(todolistId);
+            await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
+            const currentTodolist = todolist.value[todolistId];
+            if (currentTodolist && currentTodolist.value) {
+                const taskIndex = currentTodolist.value.findIndex(task => task.id === taskId);
+                if (taskIndex !== -1) {
+                    currentTodolist.value.splice(taskIndex, 1);
+                }
+            }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
@@ -155,7 +161,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
             todolists.value = response.data;
             todolists.value = todolists.value.map(m => ({...m, filter: 'All'}))
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
@@ -165,17 +171,19 @@ export const useTodoListStore = defineStore('todoLists', () => {
         const response = await instance.post(`${baseUrl}todo-lists`, {title: titleTodolist});
         try {
             if (response.data.resultCode === 0) {
-                const newTodolist = response.data.data;
+                const newTodolist =  response.data.data.item
                 todolist.value[newTodolist.id] = [];
                 todolists.value.unshift(response.data);
                 if (newTodolist) {
                     await getTodolists();
                 }
+                // todolists.value.unshift({...newTodolist, filter: 'All', })
+
             } else {
-                errorMessage.value = response.data.messages[0];
+                authStore.setError(response.data.messages[0]);
             }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
@@ -186,9 +194,12 @@ export const useTodoListStore = defineStore('todoLists', () => {
         isLoading.value = true;
         try {
             await instance.delete(`${baseUrl}todo-lists/${todolistId}`)
-            await getTodolists();
+            const index = todolists.value.findIndex(fi => fi.id === todolistId);
+            if (index > -1) {
+                todolists.value.splice(index, 1);
+            }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
 
@@ -199,18 +210,17 @@ export const useTodoListStore = defineStore('todoLists', () => {
         const responce = await instance.put(`${baseUrl}todo-lists/${todolistId}`, {title})
         try {
             if (responce.data.resultCode === 0) {
-                await getTodolists();
+                const index = todolists.value.findIndex(fi => fi.id === todolistId);
+                todolists.value[index].title = title;
             } else {
-                errorMessage.value = responce.data.messages[0];
+                authStore.setError(responce.data.messages[0]);
             }
         } catch (error) {
-            errorMessage.value = error.message ? error.message : 'Some error occurred';
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
         }
     };
-
-
 
 
     return {
@@ -227,7 +237,6 @@ export const useTodoListStore = defineStore('todoLists', () => {
         addTask,
         updateStatus,
         isLoading,
-        activeFilterButton,
-        errorMessage,
+        activeFilterButton
     };
 });

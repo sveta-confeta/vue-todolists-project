@@ -71,22 +71,6 @@ const passwordError = v.value.form.password.$error;
 const passwordDirty = v.value.form.password.$dirty;
 const passwordRequired = v.value.form.password.required;
 
-// const checkForm = () => {
-//   if (!v.value.$error) {
-//     const formData = reactive({ // Создаем реактивный объект formData
-//       email: form.value.email,
-//       password: form.value.password
-//     });
-//     authStore.login(formData);
-//     if (authStore.isLoggetIn) {
-//       debugger
-//         router.push('/todo');
-//     }
-//   } else {
-//       // Вызываем $touch(), чтобы показать ошибки после попытки отправки формы
-//       v.value.$touch();
-//     }
-//  };
 const checkForm = async () => {
   if (!v.value.$error) {
     const formData = reactive({
@@ -110,6 +94,11 @@ const checkForm = async () => {
 .submit {
   margin: 50px auto 0 auto;
   max-width: 600px;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .form-control {
