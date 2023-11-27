@@ -170,13 +170,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
         try {
             if (response.data.resultCode === 0) {
                 const newTodolist =  response.data.data.item
-                todolist.value[newTodolist.id] = [];
-                todolists.value.unshift(response.data);
-                if (newTodolist) {
-                    await getTodolists();
-                }
-                // todolists.value.unshift({...newTodolist, filter: 'All', })
-
+                todolists.value.unshift({...newTodolist, filter: 'All'});
+                newTodolist[newTodolist.id] = [];
             } else {
                 authStore.setError(response.data.messages[0]);
             }
