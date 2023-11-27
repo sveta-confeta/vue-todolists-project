@@ -139,14 +139,12 @@ export const useTodoListStore = defineStore('todoLists', () => {
     };
     const deleteTask = async (todolistId, taskId) => {
         isLoading.value = true;
+        const response =await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
         try {
-            await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
-            const currentTodolist = todolist.value[todolistId];
-            if (currentTodolist && currentTodolist.value) {
-                const taskIndex = currentTodolist.value.findIndex(task => task.id === taskId);
-                if (taskIndex !== -1) {
-                    currentTodolist.value.splice(taskIndex, 1);
-                }
+            if (response.data.resultCode === 0) {
+                todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
+            } else {
+                authStore.setError(response.data.messages[0]);
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
@@ -192,11 +190,12 @@ export const useTodoListStore = defineStore('todoLists', () => {
 
     const deleteTodolist = async (todolistId) => {
         isLoading.value = true;
+        const responce = await instance.delete(`${baseUrl}todo-lists/${todolistId}`)
         try {
-            await instance.delete(`${baseUrl}todo-lists/${todolistId}`)
-            const index = todolists.value.findIndex(fi => fi.id === todolistId);
-            if (index > -1) {
-                todolists.value.splice(index, 1);
+            if (responce.data.resultCode === 0) {
+                todolists.value=todolists.value.filter(f => f.id !== todolistId)
+            }else {
+                authStore.setError(responce.data.messages[0]);
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
