@@ -23,7 +23,6 @@ const props = defineProps({
 });
 </script>
 <style>
-//анимация списка при удалении -добавлении
 .posts-title {
   margin-bottom: 15px;
 }
@@ -40,7 +39,6 @@ const props = defineProps({
   opacity: 0;
   transform: translateX(30px);
 }
-//анимация списка при сортировке
 .list-move {
   transition: transform 0.8s ease;
 }
