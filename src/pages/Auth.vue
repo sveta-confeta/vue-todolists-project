@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="checkForm" class="submit">
+  <form @submit.prevent="checkForm" class="submit-form">
     <h1>Авторизация:</h1>
     <div class="form-group">
       <my-input
@@ -32,7 +32,7 @@
         Обязательное поле
       </p>
     </div>
-    <my-button type="submit">Отправить</my-button>
+    <my-button class="submit-btn" type="submit">Отправить</my-button>
   </form>
 </template>
 
@@ -41,12 +41,15 @@ import MyInput from "@/components/common/MyInput.vue";
 import MyButton from "@/components/common/MyButton.vue";
 import { required, minLength, email } from 'vuelidate/lib/validators';
 import { useVuelidate } from '@vuelidate/core';
-import { ref,reactive } from 'vue';
+import {ref, reactive, onMounted, watchEffect} from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import {useAuthStore} from "@/stores/AuthStore";
 const authStore = useAuthStore();
+import {useTodoListStore} from "@/stores/TodoListStore";
+const todolistStore = useTodoListStore();
+
 
 const form = ref({
   email: '',
@@ -91,14 +94,34 @@ const checkForm = async () => {
 </script>
 
 <style>
-.submit {
+.submit-form {
   margin: 50px auto 0 auto;
   max-width: 600px;
-  min-height: 280px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  min-height: 300px;
+  background: white;
+  color: coral;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid coral;
+}
+.submit-btn {
+  display: block;
+  cursor: pointer;
+  background: white;
+  color: coral;
+  padding: 10px;
+  font-size: 18px;
+  border: 1px solid coral;
+  transition: 0.5s;
+}
+.submit-btn:hover {
+  background: coral;
+  transition: 0.5s;
+  color: white;
 }
 
 .form-control {

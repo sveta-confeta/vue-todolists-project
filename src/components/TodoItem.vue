@@ -38,7 +38,6 @@ const isChecked = computed({
   set: (value) => {
     const status = value ? 2 : 0;
     todolistStore.updateStatus(props.todoItemID, props.todo.id, status);
-    debugger
   },
 });
 const editTitleHandler = (taskID, value) => {

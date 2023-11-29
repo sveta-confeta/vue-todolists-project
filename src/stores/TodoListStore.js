@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {ref, computed, reactive} from "vue";
+import {ref, computed} from "vue";
 import axios from 'axios';
 import {useAuthStore} from '@/stores/AuthStore';
 
@@ -39,28 +39,30 @@ export const useTodoListStore = defineStore('todoLists', () => {
         if (!todolist.initialData) {
             todolist.initialData = {...todolist.value};
         }
+        if (todolist.initialData[todoID]) {
+            if (value === 'Active') {
+                todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
+                    return f.status === 0
+                });
+                activeFilterButton(todoID, value);
 
-        if (value === 'Active') {
-            todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                return f.status === 0
-            });
-            activeFilterButton(todoID, value);
+            } else if (value === 'Completed') {
+                todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
+                    return f.status === 2;
+                });
+                activeFilterButton(todoID, value);
 
-        } else if (value === 'Completed') {
-            todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                return f.status === 2;
-            });
-            activeFilterButton(todoID, value);
+            } else {
+                todolist.value[todoID] = todolist.initialData[todoID];
+                activeFilterButton(todoID, value);
 
+            }
         } else {
-            todolist.value[todoID] = todolist.initialData[todoID];
-            activeFilterButton(todoID, value);
-
+            authStore.setError(error.message ? error.message : 'Some error occurred');
         }
     });
 
     const updateStatus = async (todolistId, taskId, status) => {
-        isLoading.value = true;
         const task = todolist.value[todolistId].find(t => t.id === taskId);
         const putObject = {
             title: task.title,
@@ -81,7 +83,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
-        } finally {
+        }
+        finally {
             isLoading.value = false;
         }
     };
@@ -94,9 +97,11 @@ export const useTodoListStore = defineStore('todoLists', () => {
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
         }
+        finally {
+            isLoading.value = false;
+        }
     };
     const addTask = async (todolistId, title) => {
-        isLoading.value = true;
         const response = await instance.post(`${baseUrl}todo-lists/${todolistId}/tasks`, {title});
         try {
             if (response.data.resultCode === 0) {
@@ -112,7 +117,6 @@ export const useTodoListStore = defineStore('todoLists', () => {
     };
 
     const updateTitleTask = async (todolistId, taskId, title) => {
-        isLoading.value = true;
         const task = todolist.value[todolistId].find(t => t.id === taskId);
         const putObject = {
             title,
@@ -123,8 +127,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
             startDate: task.startDate,
             deadline: task.deadline,
         }
+        await instance.put(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`, putObject);
         try {
-            await instance.put(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`, putObject);
             if (todolist.value[todolistId]) {
                 if (task) {
                     task.title = title;
@@ -133,16 +137,17 @@ export const useTodoListStore = defineStore('todoLists', () => {
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
-        } finally {
+        }
+        finally {
             isLoading.value = false;
         }
     };
     const deleteTask = async (todolistId, taskId) => {
-        isLoading.value = true;
-        const response =await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
         try {
+            const response = await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
             if (response.data.resultCode === 0) {
                 todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
+                todolist.initialData[todolistId] = todolist.value[todolistId];
             } else {
                 authStore.setError(response.data.messages[0]);
             }
@@ -150,11 +155,11 @@ export const useTodoListStore = defineStore('todoLists', () => {
             authStore.setError(error.message ? error.message : 'Some error occurred');
         } finally {
             isLoading.value = false;
+
         }
     };
     const getTodolists = async () => {
         try {
-            isLoading.value = true;
             const response = await instance.get(`${baseUrl}todo-lists`)
             todolists.value = response.data;
             todolists.value = todolists.value.map(m => ({...m, filter: 'All'}))
@@ -165,7 +170,6 @@ export const useTodoListStore = defineStore('todoLists', () => {
         }
     };
     const createTodolist = async (titleTodolist) => {
-        isLoading.value = true;
         const response = await instance.post(`${baseUrl}todo-lists`, {title: titleTodolist});
         try {
             if (response.data.resultCode === 0) {
@@ -184,7 +188,6 @@ export const useTodoListStore = defineStore('todoLists', () => {
 
 
     const deleteTodolist = async (todolistId) => {
-        isLoading.value = true;
         const responce = await instance.delete(`${baseUrl}todo-lists/${todolistId}`)
         try {
             if (responce.data.resultCode === 0) {
@@ -200,7 +203,6 @@ export const useTodoListStore = defineStore('todoLists', () => {
         }
     };
     const updateTitleTodolist = async (todolistId, title) => {
-        isLoading.value = true;
         const responce = await instance.put(`${baseUrl}todo-lists/${todolistId}`, {title})
         try {
             if (responce.data.resultCode === 0) {

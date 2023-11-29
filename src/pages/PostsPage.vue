@@ -172,7 +172,7 @@ const filteredPosts = computed(() => {
 
 }
 .posts__modal-title {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 .page__count {
   margin-right: 15px;

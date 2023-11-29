@@ -17,7 +17,7 @@
     <post-list
         :posts="filteredPosts"
         @remove="deleteHandler"/>
-    <div ref="uploadElement" class="observer"></div>
+    <div ref="observerItem" class="element"></div>
   </div>
 </template>
 
@@ -49,39 +49,40 @@ const addPost = (newPost) => {
   showModal.value = false;
 
 };
-
-
 let page=ref(1); //тут будем хранить номер страницы
 const limit=ref(10); //количество постов на одной странице
 
 async function fetchPostsObserve() {
   try {
     const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-      params:{_page:page.value,
+      params: {
+        _page:page.value,
         _limit:limit.value}
     });
-    page.value=page.value+1
+    page.value = page.value + 1
 
     posts.value = [...posts.value, ...response.data];
   } catch (e) {
-    alert('Ошибка')
+    alert(e)
   }
 }
-const uploadElement = ref(null);
+const observerItem = ref(null);
 
 onMounted(() => {
+    fetchPostsObserve();
   let options = {
     rootMargin: "0px",
-    threshold: 1.0, //элемент должен показаться полностью в зоне пересечения
+    threshold: 0.1, //элемент должен показаться полностью в зоне пересечения
   }
-  const callback = (entries, observer) => {
+  const callback = function(entries, observer) {
     if (entries[0].isIntersecting) {
       fetchPostsObserve();
     }
 
   };
-  const observer = new IntersectionObserver(callback, options);
-  observer.observe(uploadElement.value) //будем следить за этим элементом
+  let observer = new IntersectionObserver(callback, options);
+  observer.observe(observerItem.value) //будем следить за этим элементом
+
 })
 
 
@@ -154,7 +155,7 @@ const filteredPosts = computed(() => {
   background: blueviolet;
   color: azure;
 }
-.observer {
+.element{
   height: 30px;
   background: coral;
   width: 100%;

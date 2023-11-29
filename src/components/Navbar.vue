@@ -1,13 +1,14 @@
 <template>
   <div class="navbar">
     <div class="navbar__wrap">
-      <my-button  @click="$router.push('/main')" :class="{ 'active': route.path === '/main' }" class="navbar-btn"> Фильмы c табами</my-button>
+      <my-button  v-show="authStore.isLoggetIn" @click="$router.push('/main')" :class="{ 'active': route.path === '/main' }" class="navbar-btn"> Фильмы c табами</my-button>
     <div class="navbar__btn">
-      <my-button @click="$router.push('/posts')" :class="{ 'active': route.path === '/posts' }" class="navbar-btn">Посты со страницами</my-button>
-      <my-button @click="$router.push('/observe-posts')" :class="{ 'active': route.path === '/observe-posts' }" class="navbar-btn">Посты подгружаются при скролле</my-button>
-      <my-button @click="$router.push('/todo')" :class="{ 'active': route.path === '/todo' }" class="navbar-btn">Тодолисты</my-button>
+      <my-button v-show="authStore.isLoggetIn"
+                 @click="$router.push('/posts')" :class="{ 'active': route.path === '/posts' }" class="navbar-btn">Посты со страницами</my-button>
+      <my-button v-show="authStore.isLoggetIn" @click="$router.push('/observe-posts')" :class="{ 'active': route.path === '/observe-posts' }" class="navbar-btn">Посты подгружаются при скролле</my-button>
+      <my-button v-show="authStore.isLoggetIn" @click="$router.push('/todo')" :class="{ 'active': route.path === '/todo' }" class="navbar-btn">Тодолисты</my-button>
       <my-button @click="$router.push('/')" :class="{ 'active': route.path === '/' }" class="navbar-btn">Авторизация</my-button>
-      <my-button @click="logautHandler" class="navbar-btn-red">Выйти</my-button>
+      <my-button v-show="authStore.isLoggetIn" @click="logautHandler" class="navbar-btn-red">Выйти</my-button>
     </div>
     </div>
   </div>
@@ -18,11 +19,14 @@
 import MyButton from "@/components/common/MyButton.vue";
 import {useAuthStore} from "@/stores/AuthStore";
 const authStore = useAuthStore();
-import { useRoute } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 const route = useRoute();
+const router = useRouter();
 
 const logautHandler= () => {
   authStore.logout();
+  router.push('/');
+
 }
 </script>
 

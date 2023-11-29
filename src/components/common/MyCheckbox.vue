@@ -30,7 +30,6 @@ const props = defineProps({
 
 const modelValue = ref(props.modelValue);
 const onChange = (e) => {
-  debugger
   emits('update:modelValue', e.target.checked);
 
 }
