@@ -9,27 +9,27 @@ import Todo from "@/pages/Todo.vue";
 const  routes = [
     {
         path: '/main',
-        component:Main,
+        component: Main,
     },
     {
         path: '/posts',
-        component:PostsPage,
+        component: PostsPage,
     },
     {
         path: '/posts/:id',
-        component:PostIdPage,
+        component: PostIdPage,
     },
     {
         path: '/observe-posts',
-        component:PostsObservePage,
+        component: PostsObservePage,
     },
     {
         path: '/todo',
-        component:Todo,
+        component: Todo,
     },
     {
         path: '/',
-        component:Auth,
+        component: Auth,
     },
 
 ]
