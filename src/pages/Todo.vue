@@ -3,7 +3,7 @@
     <div class="todo__title">
       <todo-add-item @add-item="addItemHandler"/>
     </div>
-    <div v-if="!todolistStore.isLoading">
+    <div v-if="!todolistStore.isLoading" class="todo__todolists">
       <todolist v-for="todoItem in todolistStore.todolists" :key="todoItem.id" :todoItem="todoItem"/>
     </div>
     <my-loader v-else/>
@@ -64,6 +64,11 @@ const addItemHandler = (value) => {
 
 .todo__input {
   width: 60%;
+}
+.todo__todolists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
 }
 
 </style>
