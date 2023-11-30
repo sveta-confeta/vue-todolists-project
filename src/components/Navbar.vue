@@ -7,7 +7,7 @@
                  @click="$router.push('/posts')" :class="{ 'active': route.path === '/posts' }" class="navbar-btn">Посты со страницами</my-button>
       <my-button v-show="authStore.isLoggetIn" @click="$router.push('/observe-posts')" :class="{ 'active': route.path === '/observe-posts' }" class="navbar-btn">Посты подгружаются при скролле</my-button>
       <my-button v-show="authStore.isLoggetIn" @click="$router.push('/todo')" :class="{ 'active': route.path === '/todo' }" class="navbar-btn">Тодолисты</my-button>
-      <my-button @click="$router.push('/')" :class="{ 'active': route.path === '/' }" class="navbar-btn">Авторизация</my-button>
+<!--      <my-button @click="$router.push('/')" :class="{ 'active': route.path === '/' }" class="navbar-btn">Авторизация</my-button>-->
       <my-button v-show="authStore.isLoggetIn" @click="logautHandler" class="navbar-btn-red">Выйти</my-button>
     </div>
     </div>
@@ -59,13 +59,18 @@ const logautHandler= () => {
 }
 .navbar__wrap {
   margin: 0 auto;
-  width: 80%;
+  width: 90%;
   display: flex;
   min-height: 100px;
   padding: 20px 0;
   gap: 20px;
   align-items: center;
   justify-content: space-between;
+}
+.navbar__btn {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 .navbar__title {
   font-size: 25px;

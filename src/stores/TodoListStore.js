@@ -37,30 +37,29 @@ export const useTodoListStore = defineStore('todoLists', () => {
 
     const filteredTasks = computed(() => (todoID, value) => {
         if (!todolist.initialData) {
-            todolist.initialData = {...todolist.value};
+            todolist.initialData = {};
         }
+
+        if (!todolist.initialData[todoID]) {
+            todolist.initialData[todoID] = [...todolist.value[todoID]];
+        }
+
         if (todolist.initialData[todoID]) {
             if (value === 'Active') {
-                todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                    return f.status === 0
-                });
+                todolist.value[todoID] = todolist.initialData[todoID].filter(f => f.status === 0);
                 activeFilterButton(todoID, value);
-
             } else if (value === 'Completed') {
-                todolist.value[todoID] = todolist.initialData[todoID].filter(f => {
-                    return f.status === 2;
-                });
+                todolist.value[todoID] = todolist.initialData[todoID].filter(f => f.status === 2);
                 activeFilterButton(todoID, value);
-
             } else {
                 todolist.value[todoID] = todolist.initialData[todoID];
                 activeFilterButton(todoID, value);
-
             }
         } else {
-            authStore.setError(error.message ? error.message : 'Some error occurred');
+            authStore.setError( 'Some error filter');
         }
     });
+
 
     const updateStatus = async (todolistId, taskId, status) => {
         const task = todolist.value[todolistId].find(t => t.id === taskId);
@@ -146,8 +145,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
         try {
             const response = await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
             if (response.data.resultCode === 0) {
-                todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
-                todolist.initialData[todolistId] = todolist.value[todolistId];
+                    todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
+
             } else {
                 authStore.setError(response.data.messages[0]);
             }
@@ -159,6 +158,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
         }
     };
     const getTodolists = async () => {
+        isLoading.value = true;
         try {
             const response = await instance.get(`${baseUrl}todo-lists`)
             todolists.value = response.data;

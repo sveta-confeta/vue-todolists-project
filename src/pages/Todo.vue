@@ -22,7 +22,7 @@ import {useAuthStore} from "@/stores/AuthStore";
 const authStore = useAuthStore();
 const todolistStore = useTodoListStore();
 import { useRouter } from 'vue-router';
-const router = useRouter();
+
 
 onMounted(async () => {
   await authStore.init();
