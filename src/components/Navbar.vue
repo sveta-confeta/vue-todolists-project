@@ -1,6 +1,7 @@
 <template>
   <div class="navbar">
     <div class="navbar__wrap">
+      <h1 v-show="!authStore.isLoggetIn"> Welcome to todolists</h1>
       <my-button  v-show="authStore.isLoggetIn" @click="$router.push('/main')" :class="{ 'active': route.path === '/main' }" class="navbar-btn"> Фильмы c табами</my-button>
     <div class="navbar__btn">
       <my-button v-show="authStore.isLoggetIn"
@@ -36,6 +37,9 @@ const logautHandler= () => {
   background: coral;
   box-shadow: 2px 2px 4px gray;
 
+}
+.navbar__wrap h1 {
+  color: white;
 }
 .navbar-btn {
   border: 1px solid azure;

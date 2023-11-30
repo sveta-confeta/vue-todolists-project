@@ -7,6 +7,6 @@ import './theme.css'
 
 
 createApp(App)
-    .use(router)
     .use(createPinia())
+    .use(router)
     .mount('#app')
