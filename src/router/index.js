@@ -5,6 +5,7 @@ import Auth from '@/pages/Auth.vue'
 import PostsObservePage from '@/pages/PostsObservePage.vue'
 import {createRouter, createWebHistory} from "vue-router";
 import Todo from "@/pages/Todo.vue";
+import {useAuthStore} from "@/stores/AuthStore";
 
 const  routes = [
     {
@@ -38,5 +39,14 @@ const router = createRouter({
     routes,
     history: createWebHistory(process.env.BASE_URL),
 })
+
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+    if (to.matched.some((record) => record.meta.requiresAuth) && authStore.isLoggetIn) {
+        next({ path: "/todo" });
+    } else {
+        next();
+    }
+});
 
 export default router
