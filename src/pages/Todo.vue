@@ -21,7 +21,9 @@ import {useTodoListStore} from "@/stores/TodoListStore";
 import {useAuthStore} from "@/stores/AuthStore";
 const authStore = useAuthStore();
 const todolistStore = useTodoListStore();
-import { useRouter } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
+const router = useRouter();
+const route = useRoute();
 
 
 onMounted(async () => {
