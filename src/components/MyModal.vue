@@ -46,5 +46,11 @@ const props = defineProps({
   min-width: 400px;
   padding:20px;
 }
+.dialog__content .post-form__input {
+  height: 70px;
+}
+.dialog__content h2 {
+  margin-bottom: 5px !important;
+}
 
 </style>

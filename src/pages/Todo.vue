@@ -23,7 +23,6 @@ const authStore = useAuthStore();
 const todolistStore = useTodoListStore();
 import {useRoute, useRouter} from 'vue-router';
 const router = useRouter();
-const route = useRoute();
 
 
 onMounted(async () => {
@@ -31,11 +30,6 @@ onMounted(async () => {
   watchEffect(() => {
     if (authStore.isLoggetIn && authStore.initFlag) {
       todolistStore.getTodolists();
-    } else if (authStore.initFlag && !authStore.isLoggetIn) {
-      router.push('/todo');
-    }
-    else if (!authStore.initFlag && !authStore.isLoggetIn) {
-      router.push('/');
     }
   });
 });

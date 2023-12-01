@@ -29,6 +29,7 @@ const logautHandler= () => {
   router.push('/');
 
 }
+
 </script>
 
 <style>

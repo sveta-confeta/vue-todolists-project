@@ -56,7 +56,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
                 activeFilterButton(todoID, value);
             }
         } else {
-            authStore.setError( 'Some error filter');
+            authStore.setError('Some error filter');
         }
     });
 
@@ -82,8 +82,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
-        }
-        finally {
+        } finally {
             isLoading.value = false;
         }
     };
@@ -92,11 +91,9 @@ export const useTodoListStore = defineStore('todoLists', () => {
         try {
             const response = await instance.get(`${baseUrl}todo-lists/${todolistId}/tasks`);
             todolist.value[todolistId] = response.data.items;
-
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
-        }
-        finally {
+        } finally {
             isLoading.value = false;
         }
     };
@@ -136,8 +133,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
             }
         } catch (error) {
             authStore.setError(error.message ? error.message : 'Some error occurred');
-        }
-        finally {
+        } finally {
             isLoading.value = false;
         }
     };
@@ -145,7 +141,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
         try {
             const response = await instance.delete(`${baseUrl}todo-lists/${todolistId}/tasks/${taskId}`);
             if (response.data.resultCode === 0) {
-                    todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
+                todolist.value[todolistId] = todolist.value[todolistId].filter(t => t.id !== taskId);
 
             } else {
                 authStore.setError(response.data.messages[0]);
@@ -173,7 +169,7 @@ export const useTodoListStore = defineStore('todoLists', () => {
         const response = await instance.post(`${baseUrl}todo-lists`, {title: titleTodolist});
         try {
             if (response.data.resultCode === 0) {
-                const newTodolist =  response.data.data.item
+                const newTodolist = response.data.data.item
                 todolists.value.unshift({...newTodolist, filter: 'All'});
                 newTodolist[newTodolist.id] = [];
             } else {
@@ -191,8 +187,8 @@ export const useTodoListStore = defineStore('todoLists', () => {
         const responce = await instance.delete(`${baseUrl}todo-lists/${todolistId}`)
         try {
             if (responce.data.resultCode === 0) {
-                todolists.value=todolists.value.filter(f => f.id !== todolistId)
-            }else {
+                todolists.value = todolists.value.filter(f => f.id !== todolistId)
+            } else {
                 authStore.setError(responce.data.messages[0]);
             }
         } catch (error) {

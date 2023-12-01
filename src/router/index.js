@@ -3,27 +3,41 @@ import PostsPage from "@/pages/PostsPage.vue"
 import PostIdPage from "@/pages/PostIdPage.vue"
 import Auth from '@/pages/Auth.vue'
 import PostsObservePage from '@/pages/PostsObservePage.vue'
-import {createRouter, createWebHistory, useRoute, useRouter} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import Todo from "@/pages/Todo.vue";
 import {useAuthStore} from "@/stores/AuthStore";
-import {onMounted} from "vue";
 
 
-const authGuard = (to, from, next) => {
+
+
+
+const authGuard = async (to, from, next) => {
     const authStore = useAuthStore();
+    await authStore.init();
+    console.log(authStore.isLoggetIn, authStore.initFlag);
 
-
-        if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.isLoggetIn.value) {
-            // Если маршрут требует авторизации и пользователь не авторизован, перенаправляем на страницу логина
-            next(); // Продолжаем переход
-            debugger
-        } else {
-
-            next({ path: "/todo" });
-            debugger
-        }
-
+    if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.isLoggetIn) {
+        next();
+    } else if (to.path === '/' && authStore.isLoggetIn) {
+        next({ path: '/todo' });
+    } else {
+        next();
+    }
 };
+const backAuth = async (to, from, next) => {
+        const authStore = useAuthStore();
+        await authStore.init();
+
+        if (!authStore.isLoggetIn) {
+            next({ path: '/' });
+
+        } else {
+            next();
+        }
+};
+
+
+
 const  routes = [
     {
         path: '/main',
@@ -44,20 +58,11 @@ const  routes = [
     {
         path: '/todo',
         component: Todo,
+        beforeEnter: backAuth,
     },
     {
         path: '/',
         component: Auth,
-        // beforeEnter: (to, from, next) => {
-        //     const authStore = useAuthStore();
-        //     if (authStore.isLoggetIn.value) {
-        //         next({ path: '/todo' });
-        //         debugger
-        //     } else {
-        //         next();
-        //         debugger
-        //     }
-        // }
         meta: { requiresAuth: true },
         beforeEnter: authGuard,
     },

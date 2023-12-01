@@ -62,6 +62,9 @@ button {
   padding: 20px;
   border: 1px solid #c25205;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .todolist__title {
   font-size: 25px;

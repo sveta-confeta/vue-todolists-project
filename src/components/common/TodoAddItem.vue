@@ -60,7 +60,6 @@ const clearError = () => {
   display: flex;
   align-items: center;
   position: relative;
-  margin-bottom: 40px;
   gap: 10px;
 }
 .todoform__btn {

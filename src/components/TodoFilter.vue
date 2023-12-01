@@ -28,7 +28,7 @@ const filteredTasks = (value) => {
 
 <style>
 .todo-filter {
-  margin-top: 20px;
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
