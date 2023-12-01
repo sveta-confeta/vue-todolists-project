@@ -2,10 +2,6 @@ import {defineStore} from 'pinia'
 import {ref} from "vue";
 import axios from 'axios';
 
-import {useRouter} from 'vue-router';
-
-const router = useRouter();
-
 const baseUrl = 'https://social-network.samuraijs.com/api/1.1/';
 export const instance = axios.create({
     withCredentials: true,
@@ -17,10 +13,10 @@ export const useAuthStore = defineStore('auth', () => {
     const initFlag = ref(false);
     const errorMessageServer = ref('');
 
+
     const setError = (message) => {
         errorMessageServer.value = message;
     };
-
 
     const init = async () => {
         try {
@@ -56,7 +52,9 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const response = await instance.delete(`${baseUrl}auth/login`);
             if (response.data.resultCode === 0) {
-                window.location.href = '/';
+                const currentUrl = window.location.href;
+                const newUrl = currentUrl.split('/').slice(0, 3).join('/');
+                window.location.replace(newUrl);
             } else {
                 errorMessageServer.value = response.data.messages[0];
             }
