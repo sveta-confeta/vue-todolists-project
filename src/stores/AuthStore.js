@@ -54,6 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
             if (response.data.resultCode === 0) {
                 isLoggetIn.value = false;
                 initFlag.value = false;
+                //чтобы обновилась функция в github
             } else {
                 errorMessageServer.value = response.data.messages[0];
             }

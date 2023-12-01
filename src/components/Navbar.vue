@@ -24,9 +24,9 @@ import {useRoute, useRouter} from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-const logautHandler= () => {
-  authStore.logout();
-  router.push('/');
+const logautHandler= async () => {
+  await authStore.logout();
+  await router.push('/');
 
 }
 
