@@ -50,11 +50,10 @@ export const useAuthStore = defineStore('auth', () => {
     };
     const logout = async () => {
         try {
-            const response = await instance.delete(`${baseUrl}auth/login`);
+             const response = await instance.delete(`${baseUrl}auth/login`);
             if (response.data.resultCode === 0) {
-                const currentUrl = window.location.href;
-                const baseUrl = currentUrl.split('/').slice(0, -1).join('/');
-                window.location.replace(baseUrl);
+                isLoggetIn.value = false;
+                initFlag.value = false;
             } else {
                 errorMessageServer.value = response.data.messages[0];
             }
