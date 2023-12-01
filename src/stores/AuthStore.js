@@ -53,8 +53,8 @@ export const useAuthStore = defineStore('auth', () => {
             const response = await instance.delete(`${baseUrl}auth/login`);
             if (response.data.resultCode === 0) {
                 const currentUrl = window.location.href;
-                const newUrl = currentUrl.split('/').slice(0, 3).join('/');
-                window.location.replace(newUrl);
+                const baseUrl = currentUrl.split('/').slice(0, -1).join('/');
+                window.location.replace(baseUrl);
             } else {
                 errorMessageServer.value = response.data.messages[0];
             }
